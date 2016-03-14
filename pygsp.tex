@@ -1,0 +1,89 @@
+\section*{Second projet: PyGSP}
+
+La PyGSP est donc le second projet que j'ai eu l'occasion de réaliser dans le cadre de mes activités laborantines. Il s'agit du point principal du cahier des charges qui a été convenu avec le laboratoire. Le projet a été mené conjointement avec les deux autres stagiaires.
+
+\subsection*{Matlab}
+
+La PyGSP est un principalement un portage de la GSP\footnote{https://lts2.epfl.ch/gsp/} (acronyme de "Graph Signal Processing"), une \emph{toolbox} de traitement de signal par graphes. Cet outil possède lui aussi un parent la SGWT\footnote{http://wiki.epfl.ch/sgwt} "Spectral Graph Wavelet Toolbox" dévelopée elle aussi à l'EPFL auquelle elle emprunte différents algorithmes et graphes. Tous ces outils ont été créés par des doctorants du LTS2 en l'occurence les principaux auteurs en sont David Hamond, Johan Paratte, Nathanael Perraudin et David Shuman. Les fonctions principales de la GSP sont de pouvoir créer des graphes possédant différentes propriétés à partir de paramètres ou de nuages de points (tel le "Bunny" de Stanford) et de pouvoir ensuite filtrer des signaux sur ces graphes, avec des méthodes de filtrage consistant en un ou plusieurs filtres. Elle utilise aussi des fonctions de la UNLocBox (citée précedemment) pour tout ce qui est de l'optimisation convexe, et de différentes librairies d'optimisation qui permettent de gagner du temps de calcul. Le principal problème de cette implémentation est qu'elle repose sur des outils propriétaires et payants qui ne sont pas facilement accessibles. En revanche Matlab est un produit relativement mature (bien que comportant encore quelques bug relativement handicapants) qui gère de manière tout à fait adaptée les implémentations GPU et multi-cores.
+
+\subsection*{Buts}
+
+Les buts du port sont donc multiples, en premier obtenir un plus grande libertée quand au langage utilisé, utiliser un language gérant mieux les modules et les notions de hiérarchie dans le s imports et finalement de pouvoir être utile à un plus grand nombre de personne en prenant un language populaire.
+Il fallait toutefois aussi garder les avantages de Matlab, tel que l'interactivité et l'efficacité des implémentations.
+Le Python s'est donc imposé relativement rapidement avec son grand nombre d'utilisateurs, sa simplicité, son interactivité, le grand nombre de librairies disponibles et son dynamisme.
+Les principaux utilisateurs ont notamment mis l'accent sur le fait qu'il etait important que la PyGSP soit utilisable à travers un terminal interactif.
+
+\subsection*{Templating}
+
+Pour commencer le projet il a donc fallu commencer par fixer une architecture globale et les différents modules qui y seront ensuite incorporés. Nous avons donc commencé par définir avec les développeurs de la GSP un plan de route avec les fonctionnalités principales qui serviraient ensuite de base pour le reste. Pour cela nous avons récupéré le modèle créé par Michael Defferard pour la PyUnlocBox. Comme nous connaissions déjà l'architecture générale cela a permis de gagner énormément de temps.
+
+\subsection*{Graphes}
+
+Le premier module implémenté fut celui des graphes. Il s'agissait de créer une structure de donnée suffisamment générique et suffisament complète pour être utilisée telle quelle. Comme la \emph{toolbox} devait pouvoir être utilisée aisément au travers d'un termnial ipython, les objets devaient rester simple, avec le moins de paramètres obligatoires possibles à passer en argument. D'autant plus que le graphe serait le père de beaucoup de sous-classes qui seraient des cas particuliers de graphes. Il s'agissait aussi de pouvoir facilement ajouter différentes méthodes aux graphes et aux sous-graphes sans avoir à modifier la structure de donnée principale.
+Les Graphes se sont donc retouvés dotés de nombreux paramètres tel que sa matrice de poids, son type de laplacien etc...
+
+\begin{figure}[h!]
+    \center
+    \includegraphics[width=5cm]{gra_inhe.png}
+    \caption{L'architecture finale du module graphe}
+\end{figure}
+
+Le module des graphes est celui qui a connu le plus de retouche au fil du développement de la \emph{toolbox}, de par sa position centrale, il était absolument nécessaire qu'il soit parfaitement focntionnel et extrêmement robuste. Contrairement à la PyUNLocBox, les principaux problèmes n'ont pas été de l'ordre de l'implémentation, mais plutôt au niveau algorithmique. Certain des graphes de la version Matlab utilisant des fonctions relativement avancées de cette dernière, il a parfois été compliqué de retrouver les équivalents dans les fonctions de numpy ou scipy. Certaines fois même impossible, il a donc fallu les réimplémenter depuis le début en Python.
+
+La plupart des sous-graphes sont en fait des graphes plus ou moins célèbres, une partie d'entre eux sont contruits à partir de datasets en hdf5, un format standard de stockage de dataset, qui ont été créés sous Matlab. Heureusement, scipy possède une fonction capable d'importer de telles données, ce qui a permis de réutiliser tel quel ces fichiers.
+
+\begin{figure}[!h]
+    \center
+    \includegraphics[width=12cm]{Plot_of_LogoGSP.png}
+    \caption{Exemple de sous-graphe, le logo de la GSP}
+\end{figure}
+\newpage
+ 
+
+\subsection*{Filtres}
+
+Le module des filtres est le second plus important après celui des graphes. Son architecture est par ailleurs à l'image de ce dernier au niveau de plusieurs aspects. Tout d'abord le modèle de classe principale implémentant toutes les méthodes générales, puis ensuite les sous-classes implémentants des exemples de filtres. Grâce à cette manière de procéder, il est possible de créér un filtre manuellement, tout comme il est possible de facilement pouvoir utiliser des filtres préconfigurés et possédant des caractéristiques intéressantes ou pratiques.
+
+Ce module est une apologie à la programmation fonctionelle, chacun des filtres possédant un attribut regroupant une liste de fonction lambda qui sont ensuite appliqués au signal vivant sur le graphe. Cette façon de créer les fonctions de filtrage permet de pouvoir ensuite facilement modifier les objets ainsi créés tout en gardant une certaine simplicité dans la création des filtres.
+
+\begin{figure}[h!]
+    \center
+    \includegraphics[width=5cm]{filtr_inhe.png}
+    \caption{L'architecture finale du module filtres}
+\end{figure}
+
+\subsection*{Utils}
+
+Ce module regroupe différentes fonctions uniquement utilitaires. Il contient notamment plusieurs décorateurs qui permettent d'abstraire les notions de bancs de filtres et de listes de graphes. En effet certaines fonctions doivent pouvoir opérer de manière identique sur des graphes ou des listes de graphes, il est beacoup plus pratique d'avoir une méthode générale et réutilisable dans différents modules.
+Il contient aussi la fonction permettant de construire le \emph{logger}, une fonctionnalité implémentée par Maximillien Cuony, qui a grandement facilité le déverminage lors des phases de tests. Cette fonction à aussi permis de gérer la quantité de verbosité de chacun des éléments de la \emph{toolbox}.
+Le dernières fonctions contenues dans \emph{utils} sont principalement utilisées dans un cadre interactif, pour vérifier certaines caractéristiques des différents objets créés.
+
+\subsection*{Operators}
+
+Dans ce module se trouvent toutes les fonctions relatives aux différentes operations mathématiques, en général d'algèbre linéaire, qui sont utilisées de manière relativement répétitive dans la \emph{toolbox}.
+Durant l'implémentation des éléments qui la composent, de nombreux problèmes se sont posés, la plupart du temps à cause des différences de formatage de matrices entre le matlab et le python. C'est aussi dans ce module que se trouvent certains des éléments les plus complexes à porter de manière optimale. Effectivement, la version matlab comportait de nombreuses optimisations manuelles de certaines méthodes de calculs qui étaient propres au langage. Pour pouvoir obtenir des performances similaires, sinon parfois meilleures à la GSP originale, il a fallu longuement se renseigner sur les subtilités de Python et la manière de fonctionner de certaines fonction de numpy et scipy.
+Le résultat n'a hélas pas toujours pu être très concluant, avec certaines fonctionnalités étant encore actuellement en attente d'une manière optimale d'être implémentées.
+
+\subsection*{Plotting}
+
+J'ai été impliqué que de manière relativement limitée dans le développement de plotting, cette tâche ayant été assignée à Nicolas Rod, un de mes collègue stagiaire. J'ai toutefois donné des coups de mains de manière ponctuelle pour résoudre certains problèmes de formatage des données de \emph{plotting}. La seul conclusion que j'ai pu en tirer est le que module standard de \emph{plotting} de Python (Matplotlib) est relativement difficile à utiliser et ne donne pas des performances de rendu exceptionnel (au delà de dix milles points, le rendu est inexplorable et difficilement utilisable).
+Du coup nous avons tenté de trouver une autre librairie d'affichage afin de résoudre ces problèmes. Nous avons trouvé pyqtgraph qui s'appuie sur OpenGL pour optimiser ses performances. Il est donc finalement possible de dessiner les différents graphs et nuages de points aussi bien avec matplotlib, qui est beaucoup plus facilement sauvegardable et réutilisable dans des documents scientifiques. Ou d'utiliser pyqtgraph afin de pouvoir facilement explorer des \emph{datasets} de taille plus conséquente.
+
+\subsection*{Documentation}
+
+La documentation de la PyGSP a été générée grâce à Sphinx, dont le fonctionnement est décrit dans la section Technologies et Matériel. Chacun des modules à été soigneusement documenté avec des docstrings python contenant une description de la fonction/classe, une énumération des différents paramètres avec leur type et finalement la sortie de la fonction. L'ensemble de ces données est ensuite récupéré par Sphinx qui créé une série de fichiers html et css facilement consultables dans n'importe quel navigateur internet.
+La documentation s'est aussi vue dotée d'une partie de tutoriels, qui permettent de guider les nouveaux utilisateurs vers une meilleure compréhension de la \emph{toolbox} et de ses différents usages.
+
+\subsection*{Tests}
+
+La PyGSP s'est vue dotée d'une suite de tests complète et pour certains des modules, compréhensifs.
+Les tests ont été en partie liés à l'ecriture de la documentation, car chaque fonction comportait dans sa docstring un exemple d'utilisation qui était ensuite testé. Ainsi la documentation faisait aussi office de suite de tests unitaires.
+En plus de cela, une série de \emph{datasets} a été traité avec la GSP et les résultats ainsi obtenus ont pu servir d'éléments de comparaison.
+Une manière de tester un peu plus compréhensive est intégrée dans les différents tutoriels qui générent chacun des diagrammes et des résultats numériques qu'il est aisé de pouvoir ensuite analyser.
+
+\subsection*{Conclusion}
+
+Ce projet s'est révélé très intéressant à plusieurs niveaux.\\
+Tout d'abord, il a fallu travailler en équipe de manière efficace, avec un partage des tâches clair et adapté aux compétences de chacun.\\
+Ensuite, le dévelopement de cet outil a demandé d'acquérir de nombreuses nouvelles connaissances aussi bien théoriques sur le traitement de signal et les graphes que sur des méthodes d'implémentation propres et standards. Heureusement, nous étions suffisamment bien encadré par notre superviseur et les autres membres du laboratoire pour que nous ayions toujours des réponses rapides à nos questions.\\
+Et finlement parce que je n'avais jamais participé à un projet open-source de cette ampleur et le faire était tout à fait plaisant.

@@ -1,0 +1,55 @@
+\section{Théorie}
+\subsection{Incertitudes}
+
+Une mesure expérimentale est toujours accompagnée de son $\textit{incertitude de mesure}$. On peut qualifier cette incertitude selon différentes caractéristiques:
+\begin{itemize}
+\item La résolution
+\item La précision
+\item Le reproductabilité
+\end{itemize}
+
+Cette incertitude a de multiples sources, humaines ou liées au matériel, qui la rend inévitable mais pas pour autant non-quantifiable.
+On la calcule en générale de deux manières, sous forme $\textit{d'incertitude absolue}$ ou $\textit{d'incertitude relative}$.
+
+\paragraph{Notation}
+Un résultat s'écrit donc sous la forme: \[a\pm\Delta a\] tel que $\Delta a$ soit l'incertitude absolue et $\frac{\Delta a}{a} \%$ soit l'incertitude relative.
+
+\paragraph{Chiffres significatifs}
+Pour noter correctement les résultats avec leur incertitude, il faut être attentif aux $\textit{chiffres significatifs}$, les mesures et résultats de calculs doivent être exprimés avec un ou deu chiffres dont la valeur n'est pas certaine.\\
+Par exemple, pour une mesure au gramme près $m = (2.3\pm0.1)kg$.
+
+Une fois l'incertitude estimée, il faut encore la propager durant tous les calculs qui s'ensuiveont. Dans le cas d'une seule variable, 
+
+\subsection{Statistiques}
+Pour améliorer la précision des mesures, surtout lorsqu'elles sont nombreuses, l'on peut utiliser l'outil statistique afin de mieux cerner les incertitudes.
+
+\paragraph{Valeur moyenne}
+La valeur moyenne correspond à la moyenne des valeurs mesurées. Pour la moyenne arithmétique, on a donc:
+\begin{equation}
+    \bar{x}=\frac{1}{n}\sum_{n}^{i=1}x_i,\;\;\; \forall \; x_1, x_2, \ldots, x_k, \ldots, x_n
+\end{equation}
+
+\paragraph{Variance et écart-type}
+Les valeurs mesurées peuvent ensuite plus ou moins s'écarter de la moyenne, on peut donc observer la distibution des mesures autour de cette moyenne grace à la variance.
+\begin{equation}
+    s=\frac{1}{n-1}\sum_{i=1}^{n}\Delta x_i^2 \;\;\; avec \;\;\; \Delta x_i = x_i-\bar{x}
+\end{equation}
+
+On peut ensuite calculer l'écart-type à partir de cette variance:
+\begin{equation}
+    \sigma=\sqrt{s}
+\end{equation}
+
+Pour un nombre de mesures suffisament grand:
+\begin{itemize}
+    \item 68\% des mesures $x_i$ sont comprises entre la moyenne et l'écart type ($\bar{x}\pm\sigma$)
+    \item 95\% des mesures sont dans l'intervalle ($\bar{x}\pm2\sigma$)
+    \item 99.7\% des mesures sont dans l'intervalle ($\bar{x}\pm3\sigma$)
+\end{itemize}
+
+\paragraph{Incertitudes sur la valeur moyenne}
+Pour un nombre de mesures plus grand, la moyenne devient plus précise. Pour exprimer ceci l'on utiliser une incertitude sur la valeur moyenne qui se calcule de la manière suivante:
+\begin{equation}
+    \Delta(\bar{x})=\sigma_m=\frac{\sigma}{\sqrt{n}}\sum_{i=1}^{n}(\Delta x_i^2)
+\end{equation}
+Après $n$ mesures le résultat peut être donné avec une incertitude statistique comprises entre $\bar{x}$ et $2\sigma_m$.

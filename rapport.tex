@@ -1,0 +1,113 @@
+% Package Section
+% nag is for debug
+\RequirePackage[l2tabu, orthodox]{nag}
+%\documentclass[a4paper,french,oneside,10pt]{article}
+\documentclass[a4paper,twoside,10pt]{article}
+%\usepackage[bookman]{quotchap}
+
+\usepackage[bindingoffset=1.5cm,centering,includeheadfoot,margin=3cm]{geometry}
+
+%\frenchspacing
+%\usepackage[frenchb]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[pdftex]{graphicx}
+%\usepackage{subfig}
+
+\usepackage[protrusion=true,expansion=true]{microtype}
+
+\usepackage{fancybox}
+\usepackage{shadow}
+\usepackage{xspace}
+\usepackage{acronym}
+
+% JP
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{dsfont}
+
+\usepackage{algorithm2e}
+
+% JP : automatic line return after paragraph
+\makeatletter
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+	{-3.25ex\@plus -1ex \@minus -.2ex}%
+	{1.5ex \@plus .2ex}%
+	{\normalfont\normalsize\bfseries}}
+\makeatother
+
+% JP : use amsthm package and define some useful commands
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+
+%\usepackage[right]{eurosym}
+\usepackage{lmodern} % new latin extended computer modern font}, use with T1
+%\usepackage{pxfonts} % has replaced palatino
+%\usepackage{cmbright}
+
+\usepackage{listings}
+
+%\usepackage{booktabs}
+%\usepackage{array}
+
+\usepackage[allowlitunits]{siunitx}
+% Try $20\micro\seconds$
+
+%\addtolength{\oddsidemargin}{-1cm}
+%\addtolength{\evensidemargin}{-1cm}
+%\addtolength{\textwidth}{+2cm}
+%\usepackage{showframe}
+ 
+%\usepackage{lastpage}
+% for \pageref{LastPage}
+
+% fancy header
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+%\pagestyle{plain} % Imprime simplement le numero de page centre en bas
+%\pagestyle{headings}
+\fancyhf{} % clear default header and footer
+
+\fancyhead[LE,RO]{\textit{\nouppercase{\leftmark}}}
+%\fancyhead[LO,RE]{\textit{\nouppercase{\thepage{} of \pageref{LastPage}}}}
+\fancyhead[CE,CO]{}
+\fancyfoot[C]{--\thepage--}
+\setlength{\headheight}{14pt}
+
+\newcommand\Hrule{\noindent\rule{\linewidth}{1.5pt}}
+
+\usepackage[pdftex,
+ pdfauthor={Johan Paratte},
+ pdftitle={Sparse Binary Features for Image Classification},
+ pdfsubject={},
+ pdfkeywords={bio-inspired,computer vision,freak,classification},
+ pdfcreator=pdflatex]{hyperref}
+\hypersetup{colorlinks, citecolor=black, filecolor=black, linkcolor=black, urlcolor=black}
+
+\newcommand{\weblink}[2]{\href{#1}{\url{#1}: \textsc{#2}}}
+
+%Maths shortcuts
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\trace}{\mathbb{\text{trace}}}
+\def\mathbi#1{\textbf{\em #1}}
+%\def\mathi#1{\em #1}
+\newcommand{\Z}{\mathbi{Z}_2}
+\newcommand{\kMeans}{{\em k}-Means\xspace}
+\newcommand{\kmeans}{{\em k}-means\xspace}
+\newcommand{\kmeanspp}{{\em k}-means$++$\xspace}
+\newcommand{\captionwidth}{0.9\textwidth}
+
+% index stuff
+\usepackage{tocbibind} % Index in TOC
+%\usepackage{makeidx}
+%\usepackage{showidx} % show index entries in margin
+%\makeindex
+
+%\newcommand{\bib}[4]{\item{\textsc{#1}, \emph{#2}, #3\\\hspace{2em}#4}}
